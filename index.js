@@ -7,6 +7,10 @@ const key = fs.readFileSync('./ssl/key.pem');
 const cert = fs.readFileSync('./ssl/cert.pem');
 const https = require('https');
 
+const { spawn } = require('child_process')
+
+
+
 const app = express()
 const port = 443
 
@@ -58,7 +62,16 @@ app.post('/absen', (req, res) => {
         res.end()
 
         last_body_absen = obj
-        
+
+        const childPythonClearAbsen = spawn('python', ['./python/clear_multiple_data_absen.py', path])
+
+        childPythonClearAbsen.stdout.on('data', (data) => {
+            console.log(data.toString())
+        })
+        childPythonClearAbsen.stderr.on('data', (data) => {
+            console.log(data.toString())
+        })
+                
     } else {
         res.status(401).send({
             message: "QR not valid"
@@ -97,6 +110,15 @@ app.post('/qr', (req, res) => {
         }).end()
 
         last_body_qr = obj
+
+        const childPythonClearQR = spawn('python', ['./python/clear_multiple_data_qr.py', path])
+
+        childPythonClearQR.stdout.on('data', (data) => {
+            console.log(data.toString())
+        })
+        childPythonClearQR.stderr.on('data', (data) => {
+            console.log(data.toString())
+        })
 
 
     } else {
