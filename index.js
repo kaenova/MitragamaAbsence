@@ -82,9 +82,10 @@ app.post('/qr', (req, res) => {
             source.push({
                 "nama": obj['nama'],
                 "kelas": obj['kelas'],
+                "no_hp": obj['no_hp'],
                 "QR":obj['img']
             })
-            const csv = JSONtoCSV(source, {fields: ['nama', 'kelas', 'QR']})
+            const csv = JSONtoCSV(source, {fields: ['nama', 'kelas', 'no_hp', 'QR']})
             fs.writeFileSync(path, csv)
         })
 

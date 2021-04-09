@@ -2,29 +2,31 @@ function renderQR(){
     if (document.getElementById('nama').value != '' && document.getElementById('kelas').value != '' && document.getElementById('nohp').value != '') {
         var base
 
-        document.getElementById('qrcode').innerHTML = ""
+        document.getElementById('qr').innerHTML = ""
         var input = '{ "Nama": "'+document.getElementById('nama').value+'", "Kelas": "'+document.getElementById('kelas').value+'", "WAOrtu": "'+document.getElementById('nohp').value+'" }'
 
-        var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: input,
-            width: document.body.clientWidth,
-            height: document.body.clientWidth,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
+        var qr = new QRious({
+            element: document.getElementById('qr'),
+            value: input,
+            size:document.body.clientWidth
+        })
+
+        var canvas = document.getElementById("qr");
+        var image = canvas.toDataURL("image/png", 1.0).replace("image/png", "image/octet-stream");
+        var link = document.createElement('a');
+        link.download = document.getElementById('nama').value+"-"+document.getElementById('kelas').value+".png";
+        link.href = image;
+        link.click();
+
+        console.log(image)
 
         var obj = {
-            img : '',
+            img : image,
             nama: document.getElementById('nama').value,
-            kelas: document.getElementById('kelas').value
+            kelas: document.getElementById('kelas').value,
+            no_hp: document.getElementById('nohp').value
         }
 
-        
-        var bruh = function(ev) { 
-            base = ev.target.src
-            return base
-        }
 
         console.log(obj)   
         
@@ -42,5 +44,3 @@ function renderQR(){
         alert("Masukkan dengan lengkap")
     }
 }
-
-
