@@ -13,14 +13,13 @@ docReady(function() {
     var lastResult, countResults = 0;
     
     var html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader", { fps: 10, qrbox: 250 });
+        "qr-reader", { fps: 25, qrbox: (document.body.clientWidth*0.5) });
     
     function onScanSuccess(qrCodeMessage) {
         if (qrCodeMessage !== lastResult) {
             lastResult = qrCodeMessage
             var parsed = JSON.parse(qrCodeMessage)
             
-            console.log(parsed)
             var options = {
                 method: 'POST',
                 headers: {

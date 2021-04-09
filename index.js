@@ -7,9 +7,6 @@ const key = fs.readFileSync('./ssl/key.pem');
 const cert = fs.readFileSync('./ssl/cert.pem');
 const https = require('https');
 
-
-
-
 const app = express()
 const port = 443
 
@@ -19,8 +16,8 @@ server.listen(port, () => console.log('listening to the port', port))
 app.use(express.static('./public'))
 app.use(bodyParser.json());
 
-var last_body
-
+var last_body_absen
+var last_body_qr
 
 app.post('/absen', (req, res) => {
     var date = new Date()
@@ -33,7 +30,7 @@ app.post('/absen', (req, res) => {
     
     var obj = req.body
 
-    if (('Nama' in obj) && ('Kelas' in obj) && ('WAOrtu' in obj) && (last_body != obj)){
+    if (('Nama' in obj) && ('Kelas' in obj) && ('WAOrtu' in obj) && (last_body_absen != obj)){
         var path = "./daftar_hadir/daftar_hadir["+waktu+"].csv"
         if(fs.existsSync(path) == false){
             fs.writeFileSync(path, '.csv')
@@ -59,12 +56,56 @@ app.post('/absen', (req, res) => {
     
         res.end()
 
-        last_body = obj
+        last_body_absen = obj
         
     } else {
         res.status(401).send({
             message: "QR not valid"
         }).end
     }
+    
+})
+
+app.post('/qr', (req, res) => {
+    var path
+    var date = new Date()
+    
+    var tahun = date.getFullYear()
+
+    
+
+    var obj = req.body
+    if (('img' in obj) && ('nama' in obj) && ('kelas' in obj) && (last_body_qr != obj)){
+        
+        var path = "./data_siswa/daftar_QR_siswa.csv"
+        if(fs.existsSync(path) == false){
+            fs.writeFileSync(path, '.csv')
+        }
+        
+    
+        CSVtoJSON().fromFile(path).then(source =>{
+            source.push({
+                "nama": obj['nama'],
+                "kelas": obj['kelas'],
+                "QR":obj['img']
+            })
+            const csv = JSONtoCSV(source, {fields: ['nama', 'kelas', 'QR']})
+            fs.writeFileSync(path, csv)
+        })
+
+        res.status(200).send({
+            nama: obj['nama'],
+            kelas: obj['kelas']
+        }).end()
+
+        last_body_qr = obj
+
+
+    } else {
+        res.sendStatus(401).send({
+            msg: 'Not Valid!'
+        })
+    }
+
     
 })
