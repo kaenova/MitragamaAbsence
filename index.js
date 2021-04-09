@@ -53,7 +53,8 @@ app.post('/absen', (req, res) => {
             const csv = JSONtoCSV(source, {fields: ["jam","waktu", "nama", "kelas", "no_hp"]})
             fs.writeFileSync(path, csv)
         })
-    
+        
+        console.log(obj['Nama']+ " baru saja absen")
         res.end()
 
         last_body_absen = obj
@@ -67,12 +68,6 @@ app.post('/absen', (req, res) => {
 })
 
 app.post('/qr', (req, res) => {
-    var path
-    var date = new Date()
-    
-    var tahun = date.getFullYear()
-
-    
 
     var obj = req.body
     if (('img' in obj) && ('nama' in obj) && ('kelas' in obj) && (last_body_qr != obj)){
@@ -87,11 +82,14 @@ app.post('/qr', (req, res) => {
             source.push({
                 "nama": obj['nama'],
                 "kelas": obj['kelas'],
+                "no_hp": obj['no_hp'],
                 "QR":obj['img']
             })
-            const csv = JSONtoCSV(source, {fields: ['nama', 'kelas', 'QR']})
+            const csv = JSONtoCSV(source, {fields: ['nama', 'kelas', 'no_hp', 'QR']})
             fs.writeFileSync(path, csv)
         })
+
+        console.log('New Data on data_siswa with name '+obj['nama'])
 
         res.status(200).send({
             nama: obj['nama'],

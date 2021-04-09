@@ -16,7 +16,7 @@ docReady(function() {
         "qr-reader", { fps: 25, qrbox: (document.body.clientWidth*0.5) });
     
     function onScanSuccess(qrCodeMessage) {
-        if (qrCodeMessage !== lastResult) {
+        if (qrCodeMessage != lastResult) {
             lastResult = qrCodeMessage
             var parsed = JSON.parse(qrCodeMessage)
             
@@ -28,6 +28,8 @@ docReady(function() {
                 body: JSON.stringify(parsed)
             }
             fetch('/absen', options)
+
+            lastResult = qrCodeMessage
 
             
             // ++countResults;

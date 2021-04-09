@@ -4,29 +4,45 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="../scripts/qrcode-min.js"></script>
-    <script src="../scripts/html5-qrcode-write.js"></script>
+    <title>QR Code Generator Mitragama</title>
     <link rel="stylesheet" href="../style/main.css">
+
 </head>
 <body>
+    <script src="../scripts/QRious.js"></script>
+    <script src="../scripts/html5-qrcode-write.js"></script>
+
     <div>
         <h1 align="center">Make QR Code</h1>
     </div>
     <div class="center">
         <form action="">
-            <table>
+            <table style="border-spacing: 10px;">
                 <tr>
                     <td><label for="nama">Nama Panjang: </label></td>
                     <td><input type="text" name="nama" id="nama"></td>
                 </tr>
                 <tr>
                     <td><label for="kelas">Kelas: </label></td>
-                    <td><input type="text" name="kelas" id="kelas"></td>
+                    <td><select name="kelas" id="kelas">
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                    </select>
+                    </td>
                 </tr>
                 <tr>
-                    <td><label for="nohp">No HP Whatsapp: </label></td>
-                    <td><input type="text" name="nohp" id="nohp"></td>
+                    <td><label for="nohp">No HP Whatsapp Orang Tua: </label></td>
+                    <td><input type="number" name="nohp" id="nohp"></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center" style="padding-top: 10px;"><button type="button" onclick="renderQR()">Generate</button></td>
@@ -35,7 +51,12 @@
         </form>
     </div>
 
-        <div id="qrcode" class="center" style="padding-top: 10px;"></div>
+        <!-- <div id="qrcode" class="center" style="padding-top: 10px;"></div> -->
+
+        <div>
+            <canvas id = "qr">
+            </canvas>
+        </div>
 
         <footer style="padding-top: 20px;">
             <a href="../index.html">Go Back</a>
