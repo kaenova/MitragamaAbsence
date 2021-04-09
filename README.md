@@ -15,8 +15,8 @@ npm install
 ```
 ### On linux please install
 ```sh
-sudo apt install python-is-python3 //This makes python3 to python when called on bash/shell
-python -m pip install pandas //Installing for python dependencies
+sudo apt install python-is-python3 #This makes python3 to python when called on bash/shell
+python -m pip install pandas #Installing for python dependencies
 ```
 
 ## Usage
