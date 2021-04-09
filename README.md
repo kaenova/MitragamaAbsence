@@ -6,7 +6,7 @@
   </a>
 </p>
 
-> for mitragama absent system
+<p align="center">for Mitragama absence system <br> and me trying CSS, HTML, JS, and Python<p>
 
 ## Install
 
