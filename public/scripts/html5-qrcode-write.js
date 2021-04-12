@@ -1,9 +1,11 @@
+var latest_render = ''
+
 function renderQR(){
-    if (document.getElementById('nama').value != '' && document.getElementById('kelas').value != '' && document.getElementById('nohp').value != '') {
+    if (document.getElementById('nama').value != '' && document.getElementById('kelas').value != '' && document.getElementById('nohp').value != '' && document.getElementById('nama').value+document.getElementById('kelas').value+document.getElementById('nohp').value != latest_render) {
         var base
 
         document.getElementById('qr').innerHTML = ""
-        var input = '{ "Nama": "'+document.getElementById('nama').value+'", "Kelas": "'+document.getElementById('kelas').value+'", "WAOrtu": "'+document.getElementById('nohp').value+'" }'
+        var input = '{ "Nama": "'+document.getElementById('nama').value+'", "Kelas": "'+document.getElementById('kelas').value+'", "WAOrtu": "'+"+62"+String(document.getElementById('nohp').value)+'" }'
 
         var qr = new QRious({
             element: document.getElementById('qr'),
@@ -18,17 +20,14 @@ function renderQR(){
         link.href = image;
         link.click();
 
-        console.log(image)
+        console.log('+62'+String(document.getElementById('nohp').value))
 
         var obj = {
             img : image,
             nama: document.getElementById('nama').value,
             kelas: document.getElementById('kelas').value,
-            no_hp: document.getElementById('nohp').value
+            no_hp: '+62'+String(document.getElementById('nohp').value)
         }
-
-
-        console.log(obj)   
         
         var options = {
             method: 'POST',
@@ -37,10 +36,13 @@ function renderQR(){
             },
             body: JSON.stringify(obj)
         }
-        fetch('/qr', options)
+        fetch('/qr', options).then(response => response.json()).then(data => {
+            alert('Data '+data.nama+' untuk kelas '+data.kelas+' sudah tersimpan')
+        })
 
-        
+        latest_render = document.getElementById('nama').value+document.getElementById('kelas').value+document.getElementById('nohp').value
+
     } else {
-        alert("Masukkan dengan lengkap")
+        alert("Masukkan belum lengkap atau form sebelumnya sudah tersimpan")
     }
 }

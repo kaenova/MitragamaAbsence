@@ -7,9 +7,8 @@ const key = fs.readFileSync('./ssl/key.pem');
 const cert = fs.readFileSync('./ssl/cert.pem');
 const https = require('https');
 
-const { spawn } = require('child_process')
-
-
+const { spawn } = require('child_process');
+const { CallTracker } = require('assert');
 
 const app = express()
 const port = 443
@@ -39,11 +38,6 @@ app.post('/absen', (req, res) => {
         if(fs.existsSync(path) == false){
             fs.writeFileSync(path, '.csv')
         }
-    
-        res.status(200).send({
-            nama: obj['Nama'],
-            waktu: "Jam : "+jam+" Tanggal : "+tanggal
-        })
         
     
         CSVtoJSON().fromFile(path).then(source =>{
@@ -59,19 +53,33 @@ app.post('/absen', (req, res) => {
         })
         
         console.log(obj['Nama']+ " baru saja absen")
-        res.end()
+        
 
         last_body_absen = obj
 
-        const childPythonClearAbsen = spawn('python', ['./python/clear_multiple_data_absen.py', path])
+        try {
 
-        childPythonClearAbsen.stdout.on('data', (data) => {
-            console.log(data.toString())
-        })
-        childPythonClearAbsen.stderr.on('data', (data) => {
-            console.log(data.toString())
-        })
-                
+            const childPythonClearAbsen = spawn('python', ['./python/clear_multiple_data_absen.py', path])
+
+            childPythonClearAbsen.stdout.on('data', (data) => {
+                console.log(data.toString())
+            })
+            childPythonClearAbsen.stderr.on('data', (data) => {
+                console.log(data.toString())
+            })
+
+        } catch(err){
+            console.log('Failed to Editing csv using python after inserting '+ obj['Nama'])
+        }
+
+        res.send(JSON.stringify({
+            nama:obj['Nama'],
+            kelas:obj['Kelas'],
+            waktu: waktu,
+            jam: jam
+        }))
+        res.end()
+       
     } else {
         res.status(401).send({
             message: "QR not valid"
@@ -84,11 +92,26 @@ app.post('/qr', (req, res) => {
 
     var obj = req.body
     if (('img' in obj) && ('nama' in obj) && ('kelas' in obj) && (last_body_qr != obj)){
-        
+
+        var date = new Date()
+    
+        var jam = String(date.getHours())+""+String(date.getMinutes())
+        var tanggal = date.getDate()
+        var bulan = date.getMonth() + 1
+        var tahun = date.getFullYear()
+        var waktu = tanggal + "-" + bulan + '-' + tahun+'-'+jam
+
+        var filename = 'daftar_QR_siswa'
         var path = "./data_siswa/daftar_QR_siswa.csv"
+        var extension = '.csv'
+        var path = './data_siswa/'+filename+extension
         if(fs.existsSync(path) == false){
             fs.writeFileSync(path, '.csv')
         }
+
+        var path_backup = './backup/'+filename+'_backup'+extension
+
+        fs.copyFileSync(path, path_backup)
         
     
         CSVtoJSON().fromFile(path).then(source =>{
@@ -104,28 +127,39 @@ app.post('/qr', (req, res) => {
 
         console.log('New Data on data_siswa with name '+obj['nama'])
 
-        res.status(200).send({
-            nama: obj['nama'],
-            kelas: obj['kelas']
-        }).end()
-
         last_body_qr = obj
 
-        const childPythonClearQR = spawn('python', ['./python/clear_multiple_data_qr.py', path])
+        try {
+            const childPythonClearQR = spawn('python', ['./python/clear_multiple_data_qr.py', path]).on('error', ()=>{
+                console.log('error coy!')
+            })
 
-        childPythonClearQR.stdout.on('data', (data) => {
-            console.log(data.toString())
-        })
-        childPythonClearQR.stderr.on('data', (data) => {
-            console.log(data.toString())
-        })
+            childPythonClearQR.stdout.on('data', (data) => {
+                console.log(data.toString())
+            })
+            childPythonClearQR.stderr.on('data', (data) => {
+                console.log(data.toString())
+            })
 
+        } catch(err){
+            console.log('Failed to Editing csv using python after inserting '+ obj['nama']+'\n Please Check on Backup File Immediately')
+        }
+
+        res.send(JSON.stringify({
+            nama: obj['nama'],
+            kelas: obj['kelas']
+        })).status(200)
+        res.end()
 
     } else {
-        res.sendStatus(401).send({
+        res.sendStatus(401).send(JSON.stringify({
             msg: 'Not Valid!'
-        })
+        }))
     }
+  
+})
 
-    
+
+app.get('/kehadiran', (req, res) => {
+
 })

@@ -27,7 +27,9 @@ docReady(function() {
                 },
                 body: JSON.stringify(parsed)
             }
-            fetch('/absen', options)
+            fetch('/absen', options).then(response => response.json()).then(data => {
+                alert(data.nama+' | '+data.kelas+' terabsen pada '+data.waktu+' pada jam '+data.jam)
+            })
 
             lastResult = qrCodeMessage
 
