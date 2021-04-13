@@ -42,7 +42,7 @@
                 </tr>
                 <tr>
                     <td><label for="nohp">No HP / Whatsapp Orang Tua: </label></td>
-                    <td>+62<input type="number" name="nohp" id="nohp"></td>
+                    <td>+62<input type="number" name="nohp" id="nohp" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="12"></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center" style="padding-top: 10px;"><button type="button" onclick="renderQR()">Generate</button></td>

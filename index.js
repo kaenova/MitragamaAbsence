@@ -17,7 +17,7 @@ const server = https.createServer({key: key, cert: cert }, app);
 
 server.listen(port, () => console.log('listening to the port', port))
 app.use(express.static('./public'))
-app.use(bodyParser.json());
+app.use(bodyParser({limit: '10MB'}))
 
 var last_body_absen
 var last_body_qr
