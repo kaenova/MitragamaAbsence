@@ -119,3 +119,5 @@ dist
 *.csv
 
 WhatToDo.txt
+*.jpg
+*.png

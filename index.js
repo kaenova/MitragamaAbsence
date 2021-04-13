@@ -125,9 +125,7 @@ app.post('/qr', (req, res) => {
             fs.writeFileSync(path, csv)
         })
 
-        console.log('New Data on data_siswa with name '+obj['nama'])
-
-        last_body_qr = obj
+        var image = '{ "Nama": "'+obj['nama']+'", "Kelas": "'+obj['kelas']+'", "WAOrtu": "'+"+62"+obj['no_hp']+'" }'
 
         try {
             const childPythonClearQR = spawn('python', ['./python/clear_multiple_data_qr.py', path]).on('error', ()=>{
@@ -144,6 +142,25 @@ app.post('/qr', (req, res) => {
         } catch(err){
             console.log('Failed to Editing csv using python after inserting '+ obj['nama']+'\n Please Check on Backup File Immediately')
         }
+
+        try {
+            const childPythonSaveQR = spawn('python', ['./python/makeQRCodefromAPI.py', obj['nama']+'-'+obj['kelas'], image])
+
+            childPythonSaveQR.stdout.on('data', (data) => {
+                console.log(data.toString())
+            })
+            childPythonSaveQR.stderr.on('data', (data) => {
+                console.log(data.toString())
+            })
+
+        } catch (err){
+            console.log('error when creating QR Code image data')
+            console.log(err)
+        }
+
+        console.log('New Data on data_siswa with name '+obj['nama'])
+
+        last_body_qr = obj
 
         res.send(JSON.stringify({
             nama: obj['nama'],
