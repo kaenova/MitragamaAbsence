@@ -6,9 +6,13 @@ const JSONtoCSV = require('json2csv').parse
 const key = fs.readFileSync('./ssl/key.pem');
 const cert = fs.readFileSync('./ssl/cert.pem');
 const https = require('https');
+const schedule = require('node-schedule');
+const convertCsvToXlsx = require('@aternus/csv-to-xlsx');
+const bruh = require('path')
 
 const { spawn } = require('child_process');
 const { CallTracker } = require('assert');
+const { scheduleJob } = require('node-schedule');
 
 const app = express()
 const port = 443
@@ -25,7 +29,7 @@ http.listen(8080);
 // Create https server
 const server = https.createServer({key: key, cert: cert }, app);
 
-server.listen(port, () => console.log('listening to the port', port))
+server.listen(port, () => {console.log('listening to the port', port)})
 app.use(express.static('./public'))
 app.use(bodyParser({limit: '10MB'}))
 
@@ -189,4 +193,29 @@ app.post('/qr', (req, res) => {
 
 app.get('/kehadiran', (req, res) => {
 
+})
+
+const rekap = schedule.scheduleJob({
+    hour: 23,
+    second: 45
+}, () => {
+    var date = new Date()
+    var jam = String(date.getHours())+":"+String(date.getMinutes())
+    var tanggal = date.getDate()
+    var bulan = date.getMonth() + 1
+    var tahun = date.getFullYear()
+    var waktu = tanggal + "-" + bulan + '-' + tahun
+    var path = "./daftar_hadir/daftar_hadir["+waktu+"].csv"
+    if (fs.existsSync(path)) {
+        var asal = bruh.join(__dirname, '/daftar_hadir', '/daftar_hadir['+waktu+'].csv');
+        var convert = bruh.join(__dirname, '/rekap_daftar_hadir', '/rekap_daftar_hadir['+waktu+'].xlsx');
+        try {
+            convertCsvToXlsx(asal, convert);
+            console.log('Membuat rekapitulasi absensi untuk '+ waktu)
+        } catch (e) {
+            console.error(e.toString());
+        }
+    } else{
+        console.log('Tidak ada absensi untuk '+waktu)
+    }
 })
