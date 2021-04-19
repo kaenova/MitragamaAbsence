@@ -159,7 +159,7 @@ app.post('/qr', (req, res) => {
         }
 
         try {
-            const childPythonSaveQR = spawn('python', ['./python/makeQRCodefromAPI.py', obj['nama']+'-'+obj['kelas'], image])
+            const childPythonSaveQR = spawn('python', ['./python/makeQRCodefromAPI.py', obj['nama']+'-'+obj['kelas'], image, obj['nama'], obj['kelas']])
 
             childPythonSaveQR.stdout.on('data', (data) => {
                 console.log(data.toString())

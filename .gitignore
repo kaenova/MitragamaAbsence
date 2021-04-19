@@ -122,5 +122,6 @@ WhatToDo.txt
 *.jpg
 *.png
 *.xlsx
-
+*.psd
+!Clean.jpg
 MitragamaAbsenceLog.txt
