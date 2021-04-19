@@ -127,15 +127,16 @@ app.post('/qr', (req, res) => {
 
         fs.copyFileSync(path, path_backup)
         
-    
+        var nomor_hp = obj['no_hp']
+
         CSVtoJSON().fromFile(path).then(source =>{
             source.push({
                 "nama": obj['nama'],
                 "kelas": obj['kelas'],
-                "no_hp": obj['no_hp'],
-                "QR":obj['img']
+                "no_hp":  nomor_hp,
+                "file": obj['nama']+'-'+obj['kelas']+'.png',
             })
-            const csv = JSONtoCSV(source, {fields: ['nama', 'kelas', 'no_hp', 'QR']})
+            const csv = JSONtoCSV(source, {fields: ['nama', 'kelas', 'no_hp', 'file']})
             fs.writeFileSync(path, csv)
         })
 
