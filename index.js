@@ -140,7 +140,7 @@ app.post('/qr', (req, res) => {
             fs.writeFileSync(path, csv)
         })
 
-        var image = '{ "Nama": "'+obj['nama']+'", "Kelas": "'+obj['kelas']+'", "WAOrtu": "'+"+62"+obj['no_hp']+'" }'
+        var image = '{ "Nama": "'+obj['nama']+'", "Kelas": "'+obj['kelas']+'", "WAOrtu": "'+nomor_hp+'" }'
 
         try {
             const childPythonClearQR = spawn('python', ['./python/clear_multiple_data_qr.py', path]).on('error', ()=>{
