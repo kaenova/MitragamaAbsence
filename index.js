@@ -15,7 +15,8 @@ const { CallTracker } = require('assert');
 const { scheduleJob } = require('node-schedule');
 
 const app = express()
-const port = 443
+const port_https = 443
+const port_http = 80
 
 app.set('trust proxy')
 
@@ -25,12 +26,14 @@ const http = express();
 http.get('*', function(req, res) {  
     res.redirect('https://' + req.headers.host + req.url);
 })
-http.listen(80);
+http.listen(port_http, () => {
+    console.log('Listening HTTP Server with port', port_http)
+});
 
 // Create https server
 const server = https.createServer({key: key, cert: cert }, app);
 
-server.listen(port, () => {console.log('listening to the port', port)})
+server.listen(port_https, () => {console.log('listening HTTPS Server with port', port_https)})
 app.use(express.static('./public'))
 app.use(bodyParser({limit: '10MB'}))
 
