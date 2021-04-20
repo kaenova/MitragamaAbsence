@@ -20,11 +20,12 @@ const port = 443
 app.set('trust proxy')
 
 // Redirect from http to https
+
 const http = express();
 http.get('*', function(req, res) {  
     res.redirect('https://' + req.headers.host + req.url);
 })
-http.listen(8080);
+http.listen(80);
 
 // Create https server
 const server = https.createServer({key: key, cert: cert }, app);
