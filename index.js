@@ -27,13 +27,13 @@ http.get('*', function(req, res) {
     res.redirect('https://' + req.headers.host + req.url);
 })
 http.listen(port_http, () => {
-    console.log('Listening HTTP Server with port', port_http)
+    console.log(GetTimeNow(), 'Listening HTTP Server with port', port_http)
 });
 
 // Create https server
 const server = https.createServer({key: key, cert: cert }, app);
 
-server.listen(port_https, () => {console.log('listening HTTPS Server with port', port_https)})
+server.listen(port_https, () => {console.log(GetTimeNow(),'listening HTTPS Server with port', port_https)})
 app.use(express.static('./public'))
 app.use(bodyParser({limit: '10MB'}))
 
@@ -148,36 +148,36 @@ app.post('/qr', (req, res) => {
 
         try {
             const childPythonClearQR = spawn('python', ['./python/clear_multiple_data_qr.py', path]).on('error', ()=>{
-                console.log('error coy!')
+                console.log(GetTimeNow(), 'error coy!')
             })
 
             childPythonClearQR.stdout.on('data', (data) => {
-                console.log(data.toString())
+                console.log(GetTimeNow(), data.toString())
             })
             childPythonClearQR.stderr.on('data', (data) => {
-                console.log(data.toString())
+                console.log(GetTimeNow(), data.toString())
             })
 
         } catch(err){
-            console.log('Failed to Editing csv using python after inserting '+ obj['nama']+'\n Please Check on Backup File Immediately')
+            console.log(GetTimeNow(), 'Failed to Editing csv using python after inserting '+ obj['nama']+'\n Please Check on Backup File Immediately')
         }
 
         try {
             const childPythonSaveQR = spawn('python', ['./python/makeQRCodefromAPI.py', obj['nama']+'-'+obj['kelas'], image, obj['nama'], obj['kelas']])
 
             childPythonSaveQR.stdout.on('data', (data) => {
-                console.log(data.toString())
+                console.log(GetTimeNow(), data.toString())
             })
             childPythonSaveQR.stderr.on('data', (data) => {
-                console.log(data.toString())
+                console.log(GetTimeNow(), data.toString())
             })
 
         } catch (err){
-            console.log('error when creating QR Code image data')
+            console.log(GetTimeNow(), 'error when creating QR Code image data')
             console.log(err)
         }
 
-        console.log('New Data on data_siswa with name '+obj['nama'])
+        console.log(GetTimeNow(), 'New Data on data_siswa with name '+obj['nama'])
 
         last_body_qr = obj
 
@@ -202,6 +202,7 @@ app.get('/kehadiran', (req, res) => {
 
 const rekap = schedule.scheduleJob({
     hour: 23,
+    minute: 59,
     second: 45
 }, () => {
     var date = new Date()
@@ -216,11 +217,23 @@ const rekap = schedule.scheduleJob({
         var convert = bruh.join(__dirname, '/rekap_daftar_hadir', '/rekap_daftar_hadir['+waktu+'].xlsx');
         try {
             convertCsvToXlsx(asal, convert);
-            console.log('Membuat rekapitulasi absensi untuk '+ waktu)
+            console.log(GetTimeNow(), 'Membuat rekapitulasi absensi untuk '+ waktu)
         } catch (e) {
             console.error(e.toString());
         }
     } else{
-        console.log('Tidak ada absensi untuk '+waktu)
+        console.log(GetTimeNow(),'Tidak ada absensi untuk '+waktu)
     }
 })
+
+
+function GetTimeNow() {
+    let date = new Date()
+    let jam = String(date.getHours())+":"+String(date.getMinutes())
+    let tanggal = date.getDate()
+    let bulan = date.getMonth() + 1
+    let tahun = date.getFullYear()
+    let waktu = tanggal + "-" + bulan + '-' + tahun
+    
+    return "["+waktu+" "+jam+"]"
+}
